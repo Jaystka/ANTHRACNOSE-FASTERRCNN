@@ -1,10 +1,11 @@
 import streamlit as st
 import av
 import torch
-from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
+from streamlit_webrtc import webrtc_streamer, VideoProcessorBase
 from torchvision.models.detection import fasterrcnn_mobilenet_v3_large_fpn
 from torchvision.transforms import functional as F
 from PIL import Image
+import cv2
 
 # Daftar nama kelas untuk deteksi
 CLASS_NAMES = {1: "healthy", 2: "anthracnose"}
@@ -20,11 +21,11 @@ def load_model():
 
 model = load_model()
 
-class VideoTransformer(VideoTransformerBase):
+class VideoProcessor(VideoProcessorBase):
     def __init__(self, model):
         self.model = model
 
-    def transform(self, frame):
+    def recv(self, frame):
         # Konversi frame ke RGB
         img = frame.to_ndarray(format="bgr24")
         img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -45,4 +46,4 @@ class VideoTransformer(VideoTransformerBase):
         return av.VideoFrame.from_ndarray(img, format="bgr24")
 
 # Menjalankan webrtc streamer
-webrtc_streamer(key="example", video_transformer_factory=lambda: VideoTransformer(model))
+webrtc_streamer(key="example", video_processor_factory=lambda: VideoProcessor(model))
