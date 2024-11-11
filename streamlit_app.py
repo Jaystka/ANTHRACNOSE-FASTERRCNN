@@ -15,7 +15,7 @@ CLASS_NAMES = {1: "healthy", 2: "anthracnose"}
 def load_model():
     model = fasterrcnn_mobilenet_v3_large_fpn(weights=None, num_classes=3)
     # Pastikan untuk mengisi path model yang benar
-    model.load_state_dict(torch.load("fasterrcnn_anthracnose_detector13.pth", map_location=torch.device('cpu')))
+    model.load_state_dict(torch.load("fasterrcnn_anthracnose_detector13.pth", map_location=torch.device('cpu'), , weights_only=True))
     model.eval()
     return model
 
