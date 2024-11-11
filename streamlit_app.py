@@ -3,7 +3,7 @@ import numpy as np
 import streamlit as st
 from torchvision.models.detection import fasterrcnn_mobilenet_v3_large_fpn
 from torchvision.transforms import functional as F
-from PIL import Image
+from PIL import Image, ImageDraw
 
 # Daftar nama kelas untuk deteksi
 CLASS_NAMES = {1: "healthy", 2: "anthracnose"}
