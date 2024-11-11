@@ -32,7 +32,7 @@ if uploaded_image is not None:
     image_draw = image.copy()  # Pastikan image_draw terdefinisi
     draw = ImageDraw.Draw(image_draw)
 
-    model = load_model("model.pth")
+    model = load_model("fasterrcnn_anthracnose_detector13.pth")
     predictions = predict(model, image)
 
     # Gambar bounding box pada hasil prediksi
