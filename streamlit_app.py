@@ -14,7 +14,7 @@ CLASS_NAMES = {2: "anthracnose", 1: "healthy"}  # Sesuaikan indeks kelas dengan 
 @st.cache_resource
 def load_model(model_path):
     model = fasterrcnn_mobilenet_v3_large_fpn(weights=None, num_classes=3)
-    model.load_state_dict(torch.load(model_path, map_location=torch.device('cuda')))
+    model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
     model.eval()
     return model
 
