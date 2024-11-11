@@ -13,7 +13,7 @@ CLASS_NAMES = {1: "healthy", 2: "anthracnose"}
 @st.cache_resource
 def load_model(model_path):
     model = fasterrcnn_mobilenet_v3_large_fpn(weights=None, num_classes=3)
-    model.load_state_dict(torch.load("fasterrcnn_anthracnose_detector13.pth", map_location=torch.device('cpu'), weights_only=True))
+    model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu'), weights_only=True))
     model.eval()
     return model
 
