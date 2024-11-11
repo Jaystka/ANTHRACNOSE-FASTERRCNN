@@ -29,17 +29,19 @@ uploaded_image = st.file_uploader("Unggah gambar tanaman", type=["jpg", "jpeg", 
 
 if uploaded_image is not None:
     image = Image.open(uploaded_image).convert("RGB")
-    model = load_model("fasterrcnn_anthracnose_detector13.pth")
+    image_draw = image.copy()  # Pastikan image_draw terdefinisi
+    draw = ImageDraw.Draw(image_draw)
+
+    model = load_model("model.pth")
     predictions = predict(model, image)
 
-    # Tampilkan hasil prediksi
+    # Gambar bounding box pada hasil prediksi
     for box, label, score in zip(predictions['boxes'], predictions['labels'], predictions['scores']):
         if score >= 0.8:
             x1, y1, x2, y2 = map(int, box)
             class_name = CLASS_NAMES.get(label.item(), "Unknown")
-            image_draw = image.copy()
-            draw = ImageDraw.Draw(image_draw)
             draw.rectangle([x1, y1, x2, y2], outline="green", width=2)
             draw.text((x1, y1 - 10), f"{class_name}: {score:.2f}", fill="blue")
-    
-    st.image(image_draw, caption="Hasil Deteksi", use_container_width=True)
+
+    # Tampilkan hasil deteksi
+    st.image(image_draw, caption="Hasil Deteksi", use_column_width=True)
