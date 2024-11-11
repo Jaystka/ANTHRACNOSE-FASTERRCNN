@@ -1,5 +1,4 @@
 torch
 torchvision
-libgl1
 opencv-python
 numpy
