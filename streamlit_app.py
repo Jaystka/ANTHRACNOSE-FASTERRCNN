@@ -42,4 +42,4 @@ if uploaded_image is not None:
             draw.rectangle([x1, y1, x2, y2], outline="green", width=2)
             draw.text((x1, y1 - 10), f"{class_name}: {score:.2f}", fill="blue")
     
-    st.image(image_draw, caption="Hasil Deteksi", use_column_width=True)
+    st.image(image_draw, caption="Hasil Deteksi", use_container_width=True)
