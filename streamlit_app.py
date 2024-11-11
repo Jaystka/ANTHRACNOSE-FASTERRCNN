@@ -44,4 +44,4 @@ if uploaded_image is not None:
             draw.text((x1, y1 - 10), f"{class_name}: {score:.2f}", fill="blue")
 
     # Tampilkan hasil deteksi
-    st.image(image_draw, caption="Hasil Deteksi", use_column_width=True)
+    st.image(image_draw, caption="Hasil Deteksi", use_container_width=True)
