@@ -53,7 +53,7 @@ def run_realtime_detection(model):
     cap.release()
 
 # Memuat model
-model_path = "D:\Informatika\SKRIPSI\CODE\FASTER R-CNN/fasterrcnn_anthracnose_detector13.pth"
+model_path = "fasterrcnn_anthracnose_detector13.pth"
 model = load_model(model_path)
 
 # Judul aplikasi
