@@ -3,7 +3,7 @@ import numpy as np
 import streamlit as st
 from torchvision.models.detection import fasterrcnn_mobilenet_v3_large_fpn
 from torchvision.transforms import functional as F
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 import time  # Untuk menghitung waktu deteksi
 
 # Daftar nama kelas untuk deteksi
@@ -33,6 +33,12 @@ if uploaded_image is not None:
     image_draw = image.copy()
     draw = ImageDraw.Draw(image_draw)
 
+    # Pilih font dan ukuran
+    try:
+        font = ImageFont.truetype("arial.ttf", size=20)  # Anda bisa mengganti ukuran sesuai kebutuhan
+    except IOError:
+        font = ImageFont.load_default()  # Gunakan font default jika font tidak ditemukan
+
     # Muat model dan hitung waktu deteksi
     model = load_model("fasterrcnn_anthracnose_detector18.pth")
     start_time = time.time()  # Mulai penghitungan waktu
@@ -47,7 +53,8 @@ if uploaded_image is not None:
             x1, y1, x2, y2 = map(int, box)
             class_name = CLASS_NAMES.get(label.item(), "Unknown")
             draw.rectangle([x1, y1, x2, y2], outline="red", width=5)
-            draw.text((x1, y1 - 20), f"{class_name}: {score:.2f}", fill="white")
+            # Gambar teks dengan ukuran font besar
+            draw.text((x1, y1 - 20), f"{class_name}: {score:.2f}", fill="red", font=font)
 
     # Tampilkan hasil deteksi
     st.image(image_draw, caption="Hasil Deteksi", use_container_width=True)
