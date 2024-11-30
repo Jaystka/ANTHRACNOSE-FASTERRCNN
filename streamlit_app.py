@@ -35,7 +35,7 @@ if uploaded_image is not None:
 
     # Pilih font dan ukuran
     try:
-        font = ImageFont.truetype("arial.ttf", size=20)  # Anda bisa mengganti ukuran sesuai kebutuhan
+        font = ImageFont.truetype("arial.ttf", size=40)  # Anda bisa mengganti ukuran sesuai kebutuhan
     except IOError:
         font = ImageFont.load_default()  # Gunakan font default jika font tidak ditemukan
 
@@ -54,7 +54,7 @@ if uploaded_image is not None:
             class_name = CLASS_NAMES.get(label.item(), "Unknown")
             draw.rectangle([x1, y1, x2, y2], outline="red", width=5)
             # Gambar teks dengan ukuran font besar
-            draw.text((x1, y1 - 20), f"{class_name}: {score:.2f}", fill="red", font=font)
+            draw.text((x1, y1 - 20), f"{class_name}: {score:.2f}", fill="white", font=font)
 
     # Tampilkan hasil deteksi
     st.image(image_draw, caption="Hasil Deteksi", use_container_width=True)
