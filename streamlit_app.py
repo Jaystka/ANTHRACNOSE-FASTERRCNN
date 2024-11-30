@@ -46,8 +46,8 @@ if uploaded_image is not None:
         if score >= 0.8:
             x1, y1, x2, y2 = map(int, box)
             class_name = CLASS_NAMES.get(label.item(), "Unknown")
-            draw.rectangle([x1, y1, x2, y2], outline="red", width=2)
-            draw.text((x1, y1 - 10), f"{class_name}: {score:.2f}", fill="blue")
+            draw.rectangle([x1, y1, x2, y2], outline="red", width=5)
+            draw.text((x1, y1 - 10), f"{class_name}: {score:.2f}", fill="white")
 
     # Tampilkan hasil deteksi
     st.image(image_draw, caption="Hasil Deteksi", use_container_width=True)
