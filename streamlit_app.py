@@ -4,6 +4,7 @@ import streamlit as st
 from torchvision.models.detection import fasterrcnn_mobilenet_v3_large_fpn
 from torchvision.transforms import functional as F
 from PIL import Image, ImageDraw
+import time  # Untuk menghitung waktu deteksi
 
 # Daftar nama kelas untuk deteksi
 CLASS_NAMES = {1: "healthy", 2: "anthracnose"}
@@ -29,11 +30,16 @@ uploaded_image = st.file_uploader("Unggah gambar tanaman", type=["jpg", "jpeg", 
 
 if uploaded_image is not None:
     image = Image.open(uploaded_image).convert("RGB")
-    image_draw = image.copy()  # Pastikan image_draw terdefinisi
+    image_draw = image.copy()
     draw = ImageDraw.Draw(image_draw)
 
+    # Muat model dan hitung waktu deteksi
     model = load_model("fasterrcnn_anthracnose_detector18.pth")
+    start_time = time.time()  # Mulai penghitungan waktu
     predictions = predict(model, image)
+    end_time = time.time()  # Selesai penghitungan waktu
+
+    detection_time = end_time - start_time  # Waktu deteksi
 
     # Gambar bounding box pada hasil prediksi
     for box, label, score in zip(predictions['boxes'], predictions['labels'], predictions['scores']):
@@ -45,3 +51,6 @@ if uploaded_image is not None:
 
     # Tampilkan hasil deteksi
     st.image(image_draw, caption="Hasil Deteksi", use_container_width=True)
+
+    # Tampilkan waktu deteksi
+    st.write(f"**Waktu Deteksi:** {detection_time:.2f} detik")
