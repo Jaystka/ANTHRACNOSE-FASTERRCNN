@@ -40,7 +40,7 @@ if uploaded_image is not None:
         font = ImageFont.load_default()  # Gunakan font default jika font tidak ditemukan
 
     # Muat model dan hitung waktu deteksi
-    model = load_model("fasterrcnn_anthracnose_detector18.pth")
+    model = load_model("fasterrcnn_anthracnose_detector33.pth")
     start_time = time.time()  # Mulai penghitungan waktu
     predictions = predict(model, image)
     end_time = time.time()  # Selesai penghitungan waktu
