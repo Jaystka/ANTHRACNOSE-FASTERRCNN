@@ -5,7 +5,7 @@ from torchvision.models.detection import fasterrcnn_mobilenet_v3_large_fpn
 from torchvision.transforms import functional as F
 from PIL import Image, ImageDraw, ImageFont
 import time  # Untuk menghitung waktu deteksi
-from sklearn.metrics import average_precision_score
+import torchmetrics
 
 # Daftar nama kelas untuk deteksi
 CLASS_NAMES = {1: "healthy", 2: "anthracnose"}
@@ -26,22 +26,14 @@ def predict(model, image):
     return predictions[0]
 
 # Fungsi untuk menghitung mAP
-def calculate_map(true_labels, pred_boxes, pred_scores):
+def calculate_mAP(predictions, ground_truths):
+    iou_threshold = 0.5  # Threshold IoU untuk mAP
+    # Inisialisasi objek untuk menghitung metrik
+    metric = torchmetrics.detection.MeanAveragePrecision()
+    # Menambahkan prediksi dan ground truth ke metric
+    metric.update(predictions, ground_truths)
     # Menghitung mAP
-    num_classes = len(CLASS_NAMES)
-    y_true = np.zeros((len(true_labels), num_classes))
-    y_pred = np.zeros((len(pred_boxes), num_classes))
-
-    for i, label in enumerate(true_labels):
-        if label < num_classes:  # Ensure label is within bounds
-            y_true[i][label - 1] = 1  # Set true label (adjusting for 0-indexing)
-
-    for i, (class_id, score) in enumerate(pred_boxes):
-        if class_id < num_classes:  # Ensure class_id is within bounds
-            y_pred[i][class_id - 1] = score  # Set predicted confidence
-
-    # Menghitung mAP
-    mAP = average_precision_score(y_true, y_pred, average='macro')
+    mAP = metric.compute()
     return mAP
 
 # Streamlit UI
@@ -68,8 +60,11 @@ if uploaded_image is not None:
     detection_time = end_time - start_time  # Waktu deteksi
 
     # Gambar bounding box pada hasil prediksi
-    pred_boxes = []
-    pred_scores = []
+    ground_truths = []  # Ganti dengan ground truth jika ada
+    predicted_boxes = []
+    predicted_labels = []
+    predicted_scores = []
+    
     for box, label, score in zip(predictions['boxes'], predictions['labels'], predictions['scores']):
         if score >= 0.8:
             x1, y1, x2, y2 = map(int, box)
@@ -78,18 +73,32 @@ if uploaded_image is not None:
             # Gambar teks dengan ukuran font besar
             draw.text((x1, y1 - 20), f"{class_name}: {score:.2f}", fill="white", font=font)
 
-            # Simpan prediksi untuk mAP
-            pred_boxes.append((label.item(), score))  # (class_id, score)
-
+            # Menyimpan hasil prediksi untuk perhitungan mAP
+            predicted_boxes.append([x1, y1, x2, y2])
+            predicted_labels.append(label.item())
+            predicted_scores.append(score.item())
+            # Menambahkan ground truth jika ada
+            ground_truths.append([x1, y1, x2, y2])  # Misalnya ground truth ada di sini
+    
+    # Menghitung mAP
+    if len(predicted_boxes) > 0:
+        # Struktur format deteksi dan ground truth untuk mAP
+        predictions_dict = [{
+            'boxes': torch.tensor(predicted_boxes),
+            'labels': torch.tensor(predicted_labels),
+            'scores': torch.tensor(predicted_scores)
+        }]
+        
+        ground_truths_dict = [{
+            'boxes': torch.tensor(ground_truths),
+            'labels': torch.tensor(predicted_labels)  # Gantilah dengan label ground truth
+        }]
+        
+        mAP = calculate_mAP(predictions_dict, ground_truths_dict)
+        st.write(f"**mAP@0.5:** {mAP['map']:.2f}")
+    
     # Tampilkan hasil deteksi
     st.image(image_draw, caption="Hasil Deteksi", use_container_width=True)
 
     # Tampilkan waktu deteksi
     st.write(f"**Waktu Deteksi:** {detection_time:.2f} detik")
-
-    # Contoh label yang benar (harus disesuaikan dengan data Anda)
-    true_labels = [1, 2]  # Misalnya, 1 untuk 'healthy', 2 untuk 'anthracnose'
-    mAP = calculate_map(true_labels, pred_boxes, pred_scores)
-    st.write(f"**mAP:** {mAP:.2f}")
-
-st.write("Aplikasi deteksi penyakit antraknosa pada buah pisang dengan Faster R-CNN.")
