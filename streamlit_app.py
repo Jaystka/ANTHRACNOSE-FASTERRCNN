@@ -25,7 +25,7 @@ def predict(model, image):
     return predictions[0]
 
 # Streamlit UI
-st.title("Deteksi Anthracnose pada Tanaman")
+st.title("Deteksi Anthracnose pada Pisang Algoritma FASTER R CNN")
 uploaded_image = st.file_uploader("Unggah gambar tanaman", type=["jpg", "jpeg", "png"])
 
 if uploaded_image is not None:
