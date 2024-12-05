@@ -28,15 +28,17 @@ def predict(model, image):
 # Fungsi untuk menghitung mAP
 def calculate_map(true_labels, pred_boxes, pred_scores):
     # Menghitung mAP
-    y_true = np.zeros((len(true_labels), len(CLASS_NAMES)))
-    y_pred = np.zeros((len(pred_boxes), len(CLASS_NAMES)))
+    num_classes = len(CLASS_NAMES)
+    y_true = np.zeros((len(true_labels), num_classes))
+    y_pred = np.zeros((len(pred_boxes), num_classes))
 
     for i, label in enumerate(true_labels):
-        y_true[i][label] = 1  # Set true label
+        if label < num_classes:  # Ensure label is within bounds
+            y_true[i][label - 1] = 1  # Set true label (adjusting for 0-indexing)
 
-    for i, (box, score) in enumerate(zip(pred_boxes, pred_scores)):
-        class_id = int(box[0])  # Assuming box[0] contains the class id
-        y_pred[i][class_id] = score  # Set predicted confidence
+    for i, (class_id, score) in enumerate(pred_boxes):
+        if class_id < num_classes:  # Ensure class_id is within bounds
+            y_pred[i][class_id - 1] = score  # Set predicted confidence
 
     # Menghitung mAP
     mAP = average_precision_score(y_true, y_pred, average='macro')
@@ -78,7 +80,6 @@ if uploaded_image is not None:
 
             # Simpan prediksi untuk mAP
             pred_boxes.append((label.item(), score))  # (class_id, score)
-            pred_scores.append(score)
 
     # Tampilkan hasil deteksi
     st.image(image_draw, caption="Hasil Deteksi", use_container_width=True)
