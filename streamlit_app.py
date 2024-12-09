@@ -71,7 +71,7 @@ if uploaded_image is not None:
             class_name = CLASS_NAMES.get(label.item(), "Unknown")
             draw.rectangle([x1, y1, x2, y2], outline="red", width=5)
             # Gambar teks dengan ukuran font besar
-            draw.text((x1, y1 - 20), f"{class_name}: {score:.2f}", fill="white", font=font)
+            draw.text((x1, y1 - 20), f"{class_name}: {score:.2f}", fill="red", font=font)
 
             # Menyimpan hasil prediksi untuk perhitungan mAP
             predicted_boxes.append([x1, y1, x2, y2])
