@@ -27,7 +27,7 @@ def predict(model, image):
 
 # Fungsi untuk menghitung mAP
 def calculate_mAP(predictions, ground_truths):
-    iou_threshold = 0.5  # Threshold IoU untuk mAP
+    iou_threshold = 0.3  # Threshold IoU untuk mAP
     # Inisialisasi objek untuk menghitung metrik
     metric = torchmetrics.detection.MeanAveragePrecision()
     # Menambahkan prediksi dan ground truth ke metric
