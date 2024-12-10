@@ -72,8 +72,8 @@ if uploaded_image is not None:
             
             # Gambar kotak putih di bawah label
             text_bbox = draw.textbbox((x1, y1), f"{class_name}: {score:.2f}", font=font)
-            text_width = text_bbox[2] - text_bbox[0]
-            text_height = text_bbox[3] - text_bbox[1]
+            text_width = 22
+            text_height = 22
             margin = 5  # Jarak margin antara teks dan kotak
             draw.rectangle([x1, y1 - text_height - margin, x1 + text_width + margin, y1], fill="red")  # Kotak putih
             
