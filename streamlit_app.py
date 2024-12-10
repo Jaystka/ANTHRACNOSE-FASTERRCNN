@@ -47,7 +47,7 @@ if uploaded_image is not None:
 
     # Pilih font dan ukuran
     try:
-        font = ImageFont.truetype("arial.ttf", size=200)  # Anda bisa mengganti ukuran sesuai kebutuhan
+        font = ImageFont.truetype("arial.ttf", size=500)  # Anda bisa mengganti ukuran sesuai kebutuhan
     except IOError:
         font = ImageFont.load_default()  # Gunakan font default jika font tidak ditemukan
 
@@ -72,8 +72,8 @@ if uploaded_image is not None:
             
             # Gambar kotak putih di bawah label
             text_bbox = draw.textbbox((x1, y1), f"{class_name}: {score:.2f}", font=font)
-            text_width = 22
-            text_height = 22
+            text_width = text_bbox[2] - text_bbox[0]
+            text_height = text_bbox[3] - text_bbox[1]
             margin = 5  # Jarak margin antara teks dan kotak
             draw.rectangle([x1, y1 - text_height - margin, x1 + text_width + margin, y1], fill="red")  # Kotak putih
             
