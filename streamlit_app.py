@@ -47,7 +47,7 @@ if uploaded_image is not None:
 
     # Pilih font dan ukuran
     try:
-        font = ImageFont.truetype(size=200)  # Anda bisa mengganti ukuran sesuai kebutuhan
+        font = ImageFont.truetype("arial.ttf", size=200)  # Anda bisa mengganti ukuran sesuai kebutuhan
     except IOError:
         font = ImageFont.load_default()  # Gunakan font default jika font tidak ditemukan
 
