@@ -80,18 +80,26 @@ if uploaded_image is not None:
             except IOError:
                 font = ImageFont.load_default()  # Gunakan font default jika font tidak ditemukan
 
+            # Tentukan warna bounding box berdasarkan label
+            if label.item() == 1:  # Label 1 untuk "healthy"
+                box_color = "yellow"
+            elif label.item() == 2:  # Label 2 untuk "anthracnose"
+                box_color = "red"
+            else:
+                box_color = "green"  # Jika label tidak ditemukan, gunakan warna default
+
             # Gambar kotak putih di bawah label
             text_bbox = draw.textbbox((x1, y1), f"{class_name}: {score:.2f}", font=font)
             text_width = text_bbox[2] - text_bbox[0]
             text_height = text_bbox[3] - text_bbox[1]
             margin = 5  # Jarak margin antara teks dan kotak
-            draw.rectangle([x1, y1 - text_height - margin, x1 + text_width + margin, y1], fill="red")  # Kotak putih
+            draw.rectangle([x1, y1 - text_height - margin, x1 + text_width + margin, y1], fill=box_color)  # Kotak warna label
             
             # Gambar teks dengan ukuran font baru
             draw.text((x1 + margin, y1 - text_height - margin), f"{class_name}: {score:.2f}", fill="white", font=font)
 
-            # Gambar bounding box (kotak merah)
-            draw.rectangle([x1, y1, x2, y2], outline="red", width=5)
+            # Gambar bounding box dengan warna sesuai label
+            draw.rectangle([x1, y1, x2, y2], outline=box_color, width=5)
 
             # Menyimpan hasil prediksi untuk perhitungan mAP
             predicted_boxes.append([x1, y1, x2, y2])
