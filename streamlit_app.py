@@ -126,7 +126,6 @@ if uploaded_image is not None:
         }]
         
         mAP = calculate_mAP(predictions_dict, ground_truths_dict)
-        st.write(f"**mAP@0.5:** {mAP['map']:.2f}")
     
     # Tampilkan hasil deteksi
     st.image(image_draw, caption="Hasil Deteksi", use_container_width=True)
