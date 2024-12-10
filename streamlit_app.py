@@ -45,9 +45,9 @@ if uploaded_image is not None:
     image_draw = image.copy()
     draw = ImageDraw.Draw(image_draw)
 
-    # Pilih font dan ukuran
+    # Pilih font dan ukuran dasar
     try:
-        font = ImageFont.truetype("arial.ttf", size=500)  # Anda bisa mengganti ukuran sesuai kebutuhan
+        font = ImageFont.truetype("arial.ttf", size=40)  # Ukuran dasar untuk font
     except IOError:
         font = ImageFont.load_default()  # Gunakan font default jika font tidak ditemukan
 
@@ -70,6 +70,16 @@ if uploaded_image is not None:
             x1, y1, x2, y2 = map(int, box)
             class_name = CLASS_NAMES.get(label.item(), "Unknown")
             
+            # Tentukan ukuran font berdasarkan lebar bounding box
+            box_width = x2 - x1
+            box_height = y2 - y1
+            font_size = max(15, int(box_width / 6))  # Menyesuaikan ukuran font dengan lebar box
+            
+            try:
+                font = ImageFont.truetype("arial.ttf", size=font_size)
+            except IOError:
+                font = ImageFont.load_default()  # Gunakan font default jika font tidak ditemukan
+
             # Gambar kotak putih di bawah label
             text_bbox = draw.textbbox((x1, y1), f"{class_name}: {score:.2f}", font=font)
             text_width = text_bbox[2] - text_bbox[0]
@@ -77,7 +87,7 @@ if uploaded_image is not None:
             margin = 5  # Jarak margin antara teks dan kotak
             draw.rectangle([x1, y1 - text_height - margin, x1 + text_width + margin, y1], fill="red")  # Kotak putih
             
-            # Gambar teks dengan ukuran font besar
+            # Gambar teks dengan ukuran font baru
             draw.text((x1 + margin, y1 - text_height - margin), f"{class_name}: {score:.2f}", fill="white", font=font)
 
             # Gambar bounding box (kotak merah)
