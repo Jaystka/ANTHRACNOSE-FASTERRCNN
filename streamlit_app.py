@@ -73,7 +73,7 @@ if uploaded_image is not None:
             # Tentukan ukuran font berdasarkan lebar bounding box
             box_width = x2 - x1
             box_height = y2 - y1
-            font_size = 1000  # Menyesuaikan ukuran font dengan lebar box
+            font_size = 200  # Menyesuaikan ukuran font dengan lebar box
             
             try:
                 font = ImageFont.truetype("arial.ttf", size=font_size)
