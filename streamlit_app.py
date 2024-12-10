@@ -47,7 +47,7 @@ if uploaded_image is not None:
 
     # Pilih font dan ukuran
     try:
-        font = ImageFont.truetype("arial.ttf", size=40)  # Anda bisa mengganti ukuran sesuai kebutuhan
+        font = ImageFont.truetype("arial.ttf", size=80)  # Anda bisa mengganti ukuran sesuai kebutuhan
     except IOError:
         font = ImageFont.load_default()  # Gunakan font default jika font tidak ditemukan
 
@@ -79,6 +79,9 @@ if uploaded_image is not None:
             
             # Gambar teks dengan ukuran font besar
             draw.text((x1 + margin, y1 - text_height - margin), f"{class_name}: {score:.2f}", fill="white", font=font)
+
+            # Gambar bounding box (kotak merah)
+            draw.rectangle([x1, y1, x2, y2], outline="red", width=5)
 
             # Menyimpan hasil prediksi untuk perhitungan mAP
             predicted_boxes.append([x1, y1, x2, y2])
