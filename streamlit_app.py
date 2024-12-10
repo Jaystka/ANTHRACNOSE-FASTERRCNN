@@ -27,7 +27,7 @@ def predict(model, image):
 
 # Fungsi untuk menghitung mAP
 def calculate_mAP(predictions, ground_truths):
-    iou_threshold = 0.3  # Threshold IoU untuk mAP
+    iou_threshold = 0.6  # Threshold IoU untuk mAP
     # Inisialisasi objek untuk menghitung metrik
     metric = torchmetrics.detection.MeanAveragePrecision()
     # Menambahkan prediksi dan ground truth ke metric
@@ -66,7 +66,7 @@ if uploaded_image is not None:
     predicted_scores = []
     
     for box, label, score in zip(predictions['boxes'], predictions['labels'], predictions['scores']):
-        if score >= 0.8:
+        if score >= 0.3:
             x1, y1, x2, y2 = map(int, box)
             class_name = CLASS_NAMES.get(label.item(), "Unknown")
             draw.rectangle([x1, y1, x2, y2], outline="red", width=5)
