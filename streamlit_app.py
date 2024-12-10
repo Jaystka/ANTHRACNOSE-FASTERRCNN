@@ -69,9 +69,14 @@ if uploaded_image is not None:
         if score >= 0.3:
             x1, y1, x2, y2 = map(int, box)
             class_name = CLASS_NAMES.get(label.item(), "Unknown")
-            draw.rectangle([x1, y1, x2, y2], outline="red", width=5)
+            
+            # Gambar kotak putih di bawah label
+            text_width, text_height = draw.textsize(f"{class_name}: {score:.2f}", font=font)
+            margin = 5  # Jarak margin antara teks dan kotak
+            draw.rectangle([x1, y1 - text_height - margin, x1 + text_width + margin, y1], fill="red")  # Kotak putih
+            
             # Gambar teks dengan ukuran font besar
-            draw.text((x1, y1 - 20), f"{class_name}: {score:.2f}", fill="red", font=font)
+            draw.text((x1 + margin, y1 - text_height - margin), f"{class_name}: {score:.2f}", fill="white", font=font)
 
             # Menyimpan hasil prediksi untuk perhitungan mAP
             predicted_boxes.append([x1, y1, x2, y2])
