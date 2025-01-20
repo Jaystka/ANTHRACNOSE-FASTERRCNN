@@ -38,6 +38,11 @@ def calculate_mAP(predictions, ground_truths):
 
 # Streamlit UI
 st.title("Deteksi Anthracnose pada Pisang Algoritma FASTER R CNN")
+
+# Tambahkan slider untuk threshold dan score prediction
+threshold_slider = st.slider("Threshold bounding box", min_value=0.1, max_value=1.0, value=0.3, step=0.1)
+score_slider = st.slider("Score prediction minimum", min_value=0.1, max_value=1.0, value=0.3, step=0.1)
+
 uploaded_image = st.file_uploader("Unggah gambar tanaman", type=["jpg", "jpeg", "png"])
 
 if uploaded_image is not None:
@@ -64,17 +69,17 @@ if uploaded_image is not None:
     predicted_boxes = []
     predicted_labels = []
     predicted_scores = []
-    
+
     for box, label, score in zip(predictions['boxes'], predictions['labels'], predictions['scores']):
-        if score >= 0.3:
+        if score >= score_slider:  # Gunakan nilai dari slider score
             x1, y1, x2, y2 = map(int, box)
             class_name = CLASS_NAMES.get(label.item(), "Unknown")
-            
+
             # Tentukan ukuran font berdasarkan lebar bounding box
             box_width = x2 - x1
             box_height = y2 - y1
             font_size = 200  # Menyesuaikan ukuran font dengan lebar box
-            
+
             try:
                 font = ImageFont.truetype("arial.ttf", size=font_size)
             except IOError:
@@ -97,20 +102,22 @@ if uploaded_image is not None:
             text_height = text_bbox[3] - text_bbox[1]
             margin = 5  # Jarak margin antara teks dan kotak
             draw.rectangle([x1, y1 - text_height - margin, x1 + text_width + margin, y1], fill=box_color)  # Kotak warna label
-            
+
             # Gambar teks dengan ukuran font baru
             draw.text((x1 + margin, y1 - text_height - margin), f"{class_name}: {score:.2f}", fill=text_color, font=font)
 
             # Gambar bounding box dengan warna sesuai label
             draw.rectangle([x1, y1, x2, y2], outline=box_color, width=5)
 
-            # Menyimpan hasil prediksi untuk perhitungan mAP
-            predicted_boxes.append([x1, y1, x2, y2])
-            predicted_labels.append(label.item())
-            predicted_scores.append(score.item())
-            # Menambahkan ground truth jika ada
-            ground_truths.append([x1, y1, x2, y2])  # Misalnya ground truth ada di sini
-    
+            # Menyimpan hasil prediksi untuk perhitungan mAP jika sesuai threshold
+            box_area = (x2 - x1) * (y2 - y1)
+            if box_area >= threshold_slider:  # Gunakan nilai dari slider threshold
+                predicted_boxes.append([x1, y1, x2, y2])
+                predicted_labels.append(label.item())
+                predicted_scores.append(score.item())
+                # Menambahkan ground truth jika ada
+                ground_truths.append([x1, y1, x2, y2])  # Misalnya ground truth ada di sini
+
     # Menghitung mAP
     if len(predicted_boxes) > 0:
         # Struktur format deteksi dan ground truth untuk mAP
@@ -119,16 +126,20 @@ if uploaded_image is not None:
             'labels': torch.tensor(predicted_labels),
             'scores': torch.tensor(predicted_scores)
         }]
-        
+
         ground_truths_dict = [{
             'boxes': torch.tensor(ground_truths),
             'labels': torch.tensor(predicted_labels)  # Gantilah dengan label ground truth
         }]
-        
+
         mAP = calculate_mAP(predictions_dict, ground_truths_dict)
-    
+
     # Tampilkan hasil deteksi
     st.image(image_draw, caption="Hasil Deteksi", use_container_width=True)
 
     # Tampilkan waktu deteksi
     st.write(f"**Waktu Deteksi:** {detection_time:.2f} detik")
+
+    # Tampilkan mAP jika tersedia
+    if len(predicted_boxes) > 0:
+        st.write(f"**mAP:** {mAP['map']:.4f}")
